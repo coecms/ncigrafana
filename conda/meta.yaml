@@ -19,6 +19,8 @@ requirements:
         - numpy
         - pandas
         - dataset
+        - Psycopg2 
+        - sqlalchemy
 
 test:
     imports:

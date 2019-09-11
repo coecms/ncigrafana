@@ -1,14 +1,9 @@
 dist: trusty
 language: python
 python:
-    - '2.7'
     - '3.6'
 install:
-    - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
-          wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
-      else
-          wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-      fi
+    - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
     - bash miniconda.sh -b -p $HOME/miniconda
     - export PATH="$HOME/miniconda/bin:$PATH"
 
@@ -18,12 +13,9 @@ install:
     - if [ -f conda/dev-environment-py${TRAVIS_PYTHON_VERSION}.yml ]; then conda env update -n travis -f conda/dev-environment-py${TRAVIS_PYTHON_VERSION}.yml; fi
     - source activate travis
 
-    - pip install pytest coverage codecov
+    - pip install pytest
 env:
   global:
     - PYTHONPATH=$PYTHONPATH:..:.
 script:
     - py.test test
-after_success:
-    - coverage run --source=UsageDataset.py,test/test_UsageDataset.py -m py.test
-    - codecov

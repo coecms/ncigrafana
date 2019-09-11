@@ -12,3 +12,7 @@ dependencies:
     - pandas
     - matplotlib
     - numpy
+    - dataset
+    - sqlalchemy
+    - Psycopg2
+
