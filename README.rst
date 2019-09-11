@@ -7,87 +7,11 @@ Extended usage information for the NCI system raijin.
    :target: https://travis-ci.org/coecms/ncigrafana
 .. image:: https://circleci.com/gh/coecms/ncigrafana.svg?style=shield
   :target: https://circleci.com/gh/coecms/ncigrafana
-.. https://codecov.io/github/coecms/ncigrafana/coverage.svg?branch=master
-   :target: https://codecov.io/github/coecms/ncigrafana?branch=master
-.. image:: https://landscape.io/github/coecms/ncigrafana/master/landscape.svg?style=flat
-   :target: https://landscape.io/github/coecms/ncigrafana/master
 
-To use:
+This repository contains programs to parse the output of NCI resource
+monitoring programs and upload usage statistics to the grafana postgres 
+database.
 
-.. code:: bash
-
-    module purge
-    module use /g/data3/hh5/public/modules
-    module load conda/analysis27
-
-Basic usage message:
-
-.. code:: bash
-
-    ncigrafana -h
-    usage: ncigrafana [-h] [-u USERS] [-p PERIOD] [-P [PROJECT [PROJECT ...]]]
-                      [-S SYSTEM] [--usage] [--short] [--byuser]
-                      [--maxusage MAXUSAGE] [--pdf] [--noshow] [-d]
-
-    Show NCI account usage information with more context
-
-    optional arguments:
-      -h, --help            show this help message and exit
-      -u USERS, --users USERS
-                            Limit information to specified users
-      -p PERIOD, --period PERIOD
-                            Time period in year.quarter (e.g. 2015.q4)
-      -P [PROJECT [PROJECT ...]], --project [PROJECT [PROJECT ...]]
-                            Specify project id(s)
-      -S SYSTEM, --system SYSTEM
-                            System name
-      --usage               Show SU usage (default true)
-      --short               Show short usage (default true)
-      --byuser              Show usage by user
-      --maxusage MAXUSAGE   Set the maximum usage (useful for individual users)
-      --pdf                 Save pdf copies of plots
-      --noshow              Do not show plots
-      -d, --delta           Show change since beginning of time period
-
-Just invoking the program with no options will show a plot of your
-default project Service Unit (SU) usage and short file usage.
-
-You can ask for multiple projects, e.g.
-
-.. code:: bash
-
-    ncigrafana -P zz55 yy99 qq00
-
-If you just want to see just the change in short file usage since the
-start of the quarter (doesn't affect SU usage):
-
-.. code:: bash
-
-    ncigrafana --delta
-
-Or usage by user:
-
-.. code:: bash
-
-    ncigrafana --byuser
-
-Or just some selected users:
-
-.. code:: bash
-
-    ncigrafana -u usr1 -u usr2
-
-You can change the max usage, which allows you to track individual users
-against a target
-
-.. code:: bash
-
-    ncigrafana  -u usr1 -maxusage=1700
-
-To save PDF copies of plots, use ``--pdf``. To suppress viewing plots on
-the default display device use ``--noshow``. Combining these two options
-will produce only hard copies:
-
-::
-
-    ncigrafana --pdf --noshow
+There are two main programs, ``parse_account_usage_data`` which parses the output
+from ``nci_account``, and ``parse_user_storage_data`` which parses the output from
+the programs that report usage on the various file systems, e.g. ``gdata3_files_report``.
