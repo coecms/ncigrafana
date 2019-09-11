@@ -11,8 +11,8 @@ from numpy import arange
 
 import os
 
-from ncimonitor.UsageDataset import *
-from ncimonitor.DBcommon import datetoyearquarter
+from ncigrafana.UsageDataset import *
+from ncigrafana.DBcommon import datetoyearquarter
 
 import datetime
 

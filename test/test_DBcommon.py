@@ -10,7 +10,7 @@ from numpy import arange
 
 import os
 
-from ncimonitor.DBcommon import *
+from ncigrafana.DBcommon import *
 
 import datetime
 

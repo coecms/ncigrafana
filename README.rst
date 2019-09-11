@@ -1,16 +1,16 @@
-ncimonitor
+ncigrafana
 ==========
 
 Extended usage information for the NCI system raijin.
 
-.. image:: https://travis-ci.org/coecms/ncimonitor.svg?branch=master
-   :target: https://travis-ci.org/coecms/ncimonitor
-.. image:: https://circleci.com/gh/coecms/ncimonitor.svg?style=shield
-  :target: https://circleci.com/gh/coecms/ncimonitor
-.. https://codecov.io/github/coecms/ncimonitor/coverage.svg?branch=master
-   :target: https://codecov.io/github/coecms/ncimonitor?branch=master
-.. image:: https://landscape.io/github/coecms/ncimonitor/master/landscape.svg?style=flat
-   :target: https://landscape.io/github/coecms/ncimonitor/master
+.. image:: https://travis-ci.org/coecms/ncigrafana.svg?branch=master
+   :target: https://travis-ci.org/coecms/ncigrafana
+.. image:: https://circleci.com/gh/coecms/ncigrafana.svg?style=shield
+  :target: https://circleci.com/gh/coecms/ncigrafana
+.. https://codecov.io/github/coecms/ncigrafana/coverage.svg?branch=master
+   :target: https://codecov.io/github/coecms/ncigrafana?branch=master
+.. image:: https://landscape.io/github/coecms/ncigrafana/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/coecms/ncigrafana/master
 
 To use:
 
@@ -24,8 +24,8 @@ Basic usage message:
 
 .. code:: bash
 
-    ncimonitor -h
-    usage: ncimonitor [-h] [-u USERS] [-p PERIOD] [-P [PROJECT [PROJECT ...]]]
+    ncigrafana -h
+    usage: ncigrafana [-h] [-u USERS] [-p PERIOD] [-P [PROJECT [PROJECT ...]]]
                       [-S SYSTEM] [--usage] [--short] [--byuser]
                       [--maxusage MAXUSAGE] [--pdf] [--noshow] [-d]
 
@@ -56,33 +56,33 @@ You can ask for multiple projects, e.g.
 
 .. code:: bash
 
-    ncimonitor -P zz55 yy99 qq00
+    ncigrafana -P zz55 yy99 qq00
 
 If you just want to see just the change in short file usage since the
 start of the quarter (doesn't affect SU usage):
 
 .. code:: bash
 
-    ncimonitor --delta
+    ncigrafana --delta
 
 Or usage by user:
 
 .. code:: bash
 
-    ncimonitor --byuser
+    ncigrafana --byuser
 
 Or just some selected users:
 
 .. code:: bash
 
-    ncimonitor -u usr1 -u usr2
+    ncigrafana -u usr1 -u usr2
 
 You can change the max usage, which allows you to track individual users
 against a target
 
 .. code:: bash
 
-    ncimonitor  -u usr1 -maxusage=1700
+    ncigrafana  -u usr1 -maxusage=1700
 
 To save PDF copies of plots, use ``--pdf``. To suppress viewing plots on
 the default display device use ``--noshow``. Combining these two options
@@ -90,4 +90,4 @@ will produce only hard copies:
 
 ::
 
-    ncimonitor --pdf --noshow
+    ncigrafana --pdf --noshow

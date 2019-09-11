@@ -41,8 +41,8 @@ import pandas as pd
 from getpass import getuser
 
 # from make_usage_db import *
-from ncimonitor.UsageDataset import *
-from ncimonitor.DBcommon import *
+from ncigrafana.JobsDataset import *
+from ncigrafana.DBcommon import *
 
 plt.style.use('ggplot')
 
@@ -55,7 +55,6 @@ brewer_qualitative = [
     '#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99','#b15928',
     ] * 5 
 
-# cm = ListedColormap(iwanthuecolors, "myhues")
 cm = ListedColormap(brewer_qualitative, "myhues")
 
 def getidealdates(start, end, deltadays=1):
@@ -81,70 +80,6 @@ def select_users(df,users):
 
 def sort_table_by_last_row(df):
     df.sort_values(df.last_valid_index(), axis=1, inplace=True, ascending=False)
-
-def plot_storage(db,project,storagept,year,quarter,datafield,showtotal,cutoff=0,users=None,pdf=False, delta=False):
-
-    if datafield == 'size':
-        # Scale sizes to GB
-        # scale = 1.e12       # 1 GB 1000^4
-        scale = 1099511627776. # 1 GB 1024^4
-        ylabel = "Storage Used (TB)"
-    else:
-        scale = 1
-        ylabel = "Inodes"
-
-    if storagept == 'gdata':
-        system = 'global'
-    else:
-        system = 'raijin'
-
-    dp = db.getstorage(year, quarter, storagept=storagept, datafield=datafield)
-
-    if dp is not None:
-        dp = dp / scale
-    else:
-        return
-
-    if users is not None: dp = select_users(dp,users)
-
-    if dp is None:
-        warn("No data to display for this selection")
-        return
-
-    ideal = None; sort = True
-    if delta:
-        # Normalise by usage at beginning of the month
-        dp = dp - dp.iloc[0,:].values
-        # Select columns based on proscribed cutoff
-        dp = dp.loc[:,dp.abs().max(axis=0)>cutoff]
-        title = "Change in {} file usage since beginning of quarter {}.{} for Project {}".format(storagept,year,quarter,project)
-        type = 'line'
-    else:
-        # Sort now, as sorting is turned off so we keep remainder at top of the plot
-        sort_table_by_last_row(dp)
-        # Select columns based on proscribed cutoff
-        mask = dp.max(axis=0)>cutoff
-        if not all(mask):
-            othername = 'Remainder'
-            # Sort rows by the value of the last row in each column. Only works with recent versions of pandas.
-            # Need to sort now as we have an others column we want to retain in place
-            dp = pd.concat( [ dp.loc[:,mask], dp.loc[:,~mask].sum(axis=1).rename(othername) ], axis=1)
-            sort = False
-        title = "{} file usage for Project {} ({}.{})".format(storagept,project,year,quarter)
-        type = 'area'
-        if showtotal:
-            grant, igrant = db.getsystemstorage(system, storagept, year, quarter)
-            if datafield == 'size':
-                ideal = grant
-            else:
-                ideal = igrant
-            ideal = [ideal/scale] * 2
-
-    outfile = None
-    if pdf:
-        outfile = "nci_{storagept}_{field}_{proj}_{y}.{q}.pdf".format(storagept=storagept,field=datafield,proj=project,y=year,q=quarter)
-      
-    plot_dataframe(dp, type=type, ylabel=ylabel, title=title, cutoff=cutoff, ideal=ideal, outfile=outfile, sort=sort, delta=delta)
 
 def plot_usage(db,project,system,year,quarter,byuser,total,users,pdf=False):
 
@@ -228,18 +163,6 @@ def plot_dataframe(df, type='line', xlabel=None, ylabel=None, title=None, cutoff
         # Always snap bottom axis to zero, but not for --delta so keep in this block
         ax.set_ylim(bottom=0.)
 
-    # Commented out the fancy formatting as this didn't play well with the pandas
-    # plot method. Can revert to this at a later date plt.plot() is called directly
-
-    # monthsFmt = DateFormatter("%-d '%b")
-    # ax.xaxis.set_major_formatter(monthsFmt)
-
-    # xtick_locator = AutoDateLocator()
-    # xtick_formatter = AutoDateFormatter(xtick_locator)
-    # ax.xaxis.set_major_locator(xtick_locator)
-
-    # fig.autofmt_xdate()
-
     if outfile is not None:
         fig.savefig(outfile)
 
@@ -248,44 +171,25 @@ def main():
 
     username = getuser()
 
-    parser = argparse.ArgumentParser(description="Show NCI account usage information with more context")
+    parser = argparse.ArgumentParser(description="Show NCI job usage information")
 
+    parser.add_argument("-db","--database", help="Database file", default='jobs.db')
     parser.add_argument("-u","--users", help="Limit information to specified users", action='append')
     parser.add_argument("-p","--period", help="Time period in year.quarter (e.g. 2015.q4)")
-    parser.add_argument("-P","--project", help="Specify project id(s)", default=[os.environ["PROJECT"]], nargs='*')
+    parser.add_argument("-P","--project", help="Specify project id(s)", nargs='*')
     parser.add_argument("-S","--system", help="System name", default="raijin")
-    parser.add_argument("--usage", help="Show SU usage (default true)", action='store_true')
-    parser.add_argument("--short", help="Show short usage (default true)", action='store_true')
-    parser.add_argument("--gdata", help="Show gdata usage (default true)", action='store_true')
-    parser.add_argument("--inodes", help="Show inode usage (default false)", action='store_true')
-    parser.add_argument("--byuser", help="Show SU usage by user", action='store_true')
-    parser.add_argument("--maxusage", help="Set the maximum SU usage (useful for individual users)", type=float)
     parser.add_argument("--pdf", help="Save pdf copies of plots", action='store_true')
     parser.add_argument("--noshow", help="Do not show plots", action='store_true')
     parser.add_argument("--username", help="Show username rather than full name in plot legend", action='store_true')
-    parser.add_argument("-n","--num", help="Show only top num users where appropriate", type=int, default=None)
-    parser.add_argument("-c","--cutoff", help="Show only users whose storage exceeds cutoff", type=float, default=None)
+    parser.add_argument("-v","--plotvar", help="Variable to plot", default='waittime')
+    parser.add_argument("-g","--groupvar", help="Variable by which to group", default='queue')
+    parser.add_argument("-s","--splitvar", help="Variable by which to split groups", default='ncpusbin')
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--showtotal", help="Show the file usage limit", action='store_true')
     group.add_argument("-d","--delta", help="Show change in file system usage since beginning of time period", action='store_true')
 
-
     args = parser.parse_args()
     plot_by_user = False
-
-
-    # If we don't define any of short, usage, or gdata default to all being true
-    if not(args.short or args.usage or args.gdata):
-        args.usage = True
-        args.short = True
-        args.gdata = True
-
-    if args.cutoff is not None:
-        cutoff = args.cutoff
-    else:
-        cutoff = 0.
-            
-    plot_by_user = args.byuser
 
     if args.period is not None:
         year, quarter = args.period.split(".")
@@ -293,58 +197,47 @@ def main():
         date = datetime.datetime.now()
         year, quarter = datetoyearquarter(date)
 
-    if args.inodes:
-        datafield = 'inodes'
-    else:
-        datafield = 'size'
-        
     use_full_name = not args.username
 
-    num_show = args.num
-    if num_show is not None and num_show < 1: 
-        raise ValueError('num must be > 0') 
+    dbfile = 'sqlite:///'+os.path.join(args.database)
+    try:
+        db = JobsDataset(dbfile)
+    except:
+        print("ERROR! You are not a member of this group: ",project)
+    else:
 
-    dbfileprefix = '/short/public/aph502/.data/'
+        df = db.getjobs()
 
-    for project in args.project:
+        if df.empty:
+            raise ValueError("No data returned for this query")
 
-        dbfile = 'sqlite:///'+os.path.join(dbfileprefix,"usage_{}_{}.db".format(project,year))
-        try:
-            db = ProjectDataset(project,dbfile)
-        except:
-            print("ERROR! You are not a member of this group: ",project)
-            continue
-        else:
-
-            users = None
-            if args.users is not None:
-                plot_by_user = True
-                users = args.users
-
-            if args.maxusage:
-                total_grant = args.maxusage
-            else:
-                if plot_by_user:
-                    # Doesn't make sense to show "ideal" usage when showing individual usage
-                    total_grant = None
+        if args.project:
+            project = []
+            for p in args.project:
+                if p == 'clex':
+                    project.extend(['w35', 'w40', 'w42', 'w48', 'w97', 'v45'])
+                elif p == 'mom':
+                    project.extend(['v45', 'e14', 'x77', 'g40'])
                 else:
-                    total_grant = db.getgrant(year, quarter)
+                    project.append(p)
+            project = set(project)
+            print(project)
+            df = df.loc[df.project.isin(project),]
 
-            system = args.system
-    
-            if args.usage:
-    
-                plot_usage(db,project,system,year,quarter,plot_by_user,total_grant,users,args.pdf)
-    
-            if args.short:
-    
-                plot_storage(db,project,'short',year,quarter,datafield,args.showtotal,cutoff,users,args.pdf, delta=args.delta)
-    
-            if args.gdata:
-    
-                plot_storage(db,project,'gdata',year,quarter,datafield,args.showtotal,cutoff,users,args.pdf, delta=args.delta)
-    
-            if not args.noshow: plt.show()
+        users = None
+        if args.users is not None:
+            users = args.users
+            df = df.loc[df.username.isin(args.users),]
+
+        if df.empty:
+            raise ValueError("No data left after applying variable choices")
+
+        # Add a binned job size column using cut
+        # pd.cut(df.ncpus,[0,1,2,16,128,1024,float("inf")])
+
+        pd.pivot_table(df, values=args.plotvar, index=args.groupvar, columns=args.splitvar).plot(kind='bar')
+
+        if not args.noshow: plt.show()
 
 if __name__ == "__main__":
     main()

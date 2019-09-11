@@ -1,5 +1,5 @@
 package:
-    name: ncimonitor
+    name: ncigrafana
     version: {{ GIT_DESCRIBE_TAG}}
 
 build:
@@ -22,7 +22,7 @@ requirements:
 
 test:
     imports:
-        - ncimonitor
+        - ncigrafana
     requires:
         - pytest
     source_files:
@@ -32,4 +32,4 @@ test:
         - py.test
 
 about:
-    home: https://github.com/coecms/ncimonitor
+    home: https://github.com/coecms/ncigrafana
