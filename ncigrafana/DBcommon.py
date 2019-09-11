@@ -84,7 +84,7 @@ def archive(filepath,archive_dir='archive'):
     try:
         (dir, filename) = os.path.split(filepath)
         outfile = os.path.join(dir,archive_dir,filename)+'.gz'
-        with open(filename, 'rb') as f_in, gzip.open(outfile, 'wb') as f_out:
+        with open(filepath, 'rb') as f_in, gzip.open(outfile, 'wb') as f_out:
             shutil.copyfileobj(f_in, f_out)
     except Exception as e:
         print("Error archiving ",filepath)
