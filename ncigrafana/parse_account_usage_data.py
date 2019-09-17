@@ -49,7 +49,7 @@ def parse_account_dump_file(filename, verbose, db=None, dburl=None):
         for line in f:
             line = line.rstrip(os.linesep)
             if verbose: print(line)
-            if line.startswith("%%%%%%%%%%%%%%%%%"):
+            if line.startswith("%%%%%%%%%%%%%%%%"):
                 # Grab date string
                 date = datetime.datetime.strptime(f.readline().rstrip(os.linesep), "%a %b %d %H:%M:%S %Z %Y").date()
             elif line.startswith("Usage Report:") and "Compute" in line:

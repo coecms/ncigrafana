@@ -59,7 +59,7 @@ def parse_file_report(filename, verbose, db=None, dburl=None):
 
         for line in f:
             if verbose: print("> ",line)
-            if line.startswith("%%%%%%%%%%%%%%%%%"):
+            if line.startswith("%%%%%%%%%%%%%%%%"):
                 # Grab date string
                 date = datetime.datetime.strptime(f.readline().strip(os.linesep), "%a %b %d %H:%M:%S %Z %Y")
                 year, quarter = datetoyearquarter(date)
