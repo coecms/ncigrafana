@@ -89,11 +89,12 @@ def parse_account_dump_file(filename, verbose, db=None, dburl=None):
                 inusage = True
                 system = line.split('=')[1]
                 if verbose: print('inusage: ',inusage)
-                # Gobble header line
+                # Gobble 3 header lines
                 f.readline()
                 f.readline()
                 f.readline()
-                f.readline()
+                # This header line contains the unit information for the grants
+                grant_units = [ u.strip('()') for u in f.readline().split() ]
             elif inusage:
                 # Stakeholder    Grant           Used      Available       Price         CPU         CPU         CPU
                 #                (KSU)          (KSU)          (KSU)  (per SU) $    Credit $      Used $   Balance $
@@ -101,10 +102,14 @@ def parse_account_dump_file(filename, verbose, db=None, dburl=None):
                 try:
                     tmp = line.split() 
                     assert(len(tmp)==8)
-                    (scheme,granttype) = tmp[0].rsplit('-',1)
-                    grantsu  = tmp[1]
-                    usesu    = tmp[2]
-                    costpersu = tmp[3]
+                    (scheme,granttype) = tmp.pop(0).rsplit('-',1)
+                    if verbose: print(scheme, granttype)
+
+                    for i, grant in enumerate(tmp[:3]):
+                        print(i,grant,grant_units[i],tmp[i])
+                        tmp[i] = parse_size(grant+grant_units[i],b=1000,u='SU')
+                        print(i,grant,tmp[i])
+                    (grantsu, usesu, availablesu) = tmp[:3]
                 except:
                     inusage = False
                     continue
