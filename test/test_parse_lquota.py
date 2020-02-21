@@ -17,7 +17,7 @@ from ncigrafana.parse_lquota import parse_lquota
 
 # Set acceptable time zone strings so we can parse the 
 # AEST timezone in the test file
-time.tzone = ('AEST', 'AEDT')
+time.tzname = ('AEST', 'AEDT')
 dbfileprefix = '.'
 
 @pytest.fixture(scope='session')
