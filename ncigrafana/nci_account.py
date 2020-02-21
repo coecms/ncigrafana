@@ -48,7 +48,7 @@ def get_resource(project):
         print("Could not fetch accounting report. Please try again later.\n")
         sys.exit(1)
     finally:
-        res = rc.read()
+        res = rc.read().decode()
         rc.close()
 
     return res
