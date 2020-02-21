@@ -9,11 +9,15 @@ import os
 import pandas as pd
 import pytest
 import sys
+import time
 
 from ncigrafana.UsageDataset import *
 from ncigrafana.DBcommon import datetoyearquarter
 from ncigrafana.parse_lquota import parse_lquota 
 
+# Set acceptable time zone strings so we can parse the 
+# AEST timezone in the test file
+time.tzone = ('AEST', 'AEDT')
 dbfileprefix = '.'
 
 @pytest.fixture(scope='session')
