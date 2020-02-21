@@ -32,7 +32,7 @@ unit_base = { 'B' : 1024, 'SU' : 1000 }
 def extract_num_unit(s):
     # Match a number (possibly floating point 100.00 style) and a unit
     try:
-        size, unit = re.findall('(\d+.\d+|\d+)\s*(\D*)$',s)[0]
+        size, unit = re.findall(r'(\d+.\d+|\d+)\s*(\D*)$',s)[0]
     except:
         print('Failed to match size string: ',s)
         sys.exit()
