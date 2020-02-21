@@ -231,19 +231,19 @@ class ProjectDataset(object):
                     usage_su=float(su))
         return self.db['ProjectUsage'].upsert(data, ['project_id', 'systemqueue_id', 'date'])
 
-    def addprojectstorage(self, project, system, storagepoint, date, grant, igrant):
+    def addprojectstorage(self, project, system, storagepoint, date, size, inodes):
         """
         Add a project storage entry by system and storage point
         """
         project_id = self.addproject(project)
         system_id = self.addsystem(system)
         storagepoint_id = self.addstoragepoint(system, storagepoint)
-        data = dict(project=project_id,
+        data = dict(project_id=project_id,
                     system_id=system_id,
                     storagepoint_id=storagepoint_id,
                     date=date,
-                    grant=float(grant),
-                    igrant=float(igrant))
+                    size=float(size),
+                    inodes=float(inodes))
         return self.db['ProjectStorage'].upsert(data, ['project_id', 'system_id', 'storagepoint_id', 'date'])
 
     def adduserusage(self, project, user, date, usecpu, usewall, usesu, efficiency):
@@ -528,6 +528,20 @@ class ProjectDataset(object):
             return (None,None)
         return float(q['grant']),float(q['igrant'])
 
+    def getprojectstorage(self, project, system, storagepoint):
+        """
+        Add a project storage entry by system and storage point
+        """
+        project_id = self.addproject(project)
+        system_id = self.addsystem(system)
+        storagepoint_id = self.addstoragepoint(system, storagepoint)
+        data = dict(project_id=project_id,
+                    system_id=system_id,
+                    storagepoint_id=storagepoint_id)
+        q = self.db['ProjectStorage'].find_one(**data)
+        if q is None:
+            return (None,None)
+        return float(q['size']),float(q['inodes'])
 
     def top_usage(self, year, quarter, storagepoint, measure='size', count=10, scale=1):
         """
