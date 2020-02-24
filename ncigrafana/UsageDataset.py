@@ -476,6 +476,13 @@ class ProjectDataset(object):
         system_id = self.addsystem(system)
         return self.db['SystemQueues'].find_one(system_id=system_id, queue=queue)
 
+    def getquarter(self):
+        """
+        Return (year, quarter) for the most recent entry in the DB table Quarters
+        """
+        q = self.db['Quarters'].find_one(order_by=['-year','-quarter'])
+        return q['year'], q['quarter'] 
+
     def date2date(self, datestring):
 
         if type(datestring) == datetime.date:

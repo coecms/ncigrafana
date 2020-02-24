@@ -75,6 +75,9 @@ def test_addquarter(db):
     assert( sdate == startdate )
     assert( edate == enddate )
 
+def test_getquarter(db):
+    assert( (1984,'q4') == db.getquarter())
+
 def test_addusagegrant(db):
     year = 1984; quarter = 'q3'
     grant = 5000000; scheme = 'Big grant'
