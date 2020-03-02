@@ -24,8 +24,8 @@ dbfileprefix = '.'
 @pytest.fixture(scope='session')
 def db():
     project = 'xx00'
-    # dbfile = "sqlite:///:memory:"
-    dbfile = "sqlite:///usage.db"
+    dbfile = "sqlite:///:memory:"
+    # dbfile = "sqlite:///usage.db"
     return ProjectDataset(project,dbfile)
 
 def test_parse_lquota(db):
