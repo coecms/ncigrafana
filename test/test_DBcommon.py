@@ -40,3 +40,18 @@ def test_parse_numbers_with_units():
     assert(parse_size('10B')==10)
     assert(parse_size('10SU',u='SU')==10)
     assert(parse_size('10.0 SU',u='SU')==10)
+
+
+def test_date_range_from_quarter():
+
+    assert(date_range_from_quarter(2020,'q1') ==
+           (datetime.date(2020,1,1), datetime.date(2020,3,31)))
+
+    assert(date_range_from_quarter(2166,'q2') ==
+           (datetime.date(2166,4,1), datetime.date(2166,6,30)))
+
+    assert(date_range_from_quarter(1066,'q3') ==
+           (datetime.date(1066,7,1), datetime.date(1066,9,30)))
+
+    assert(date_range_from_quarter(7,'q4') ==
+           (datetime.date(7,10,1), datetime.date(7,12,31)))

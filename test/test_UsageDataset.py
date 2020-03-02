@@ -75,6 +75,9 @@ def test_addquarter(db):
     assert( sdate == startdate )
     assert( edate == enddate )
 
+def test_getquarter(db):
+    assert( (1984,'q4') == db.getquarter())
+
 def test_addusagegrant(db):
     year = 1984; quarter = 'q3'
     grant = 5000000; scheme = 'Big grant'
@@ -172,9 +175,9 @@ def test_adduserusage(db):
     # Grab all users with SU usage > 0 for this quarter
     for user in db.getsuusers(year, quarter):
         # Extract SUs and check sum is the same as 
-        dates, sus = db.getusersu(db.project, year, quarter, user)
+        dates, sus = db.getuserusage(db.project, year, quarter, user)
         assert_array_almost_equal (sus, arange(0.0,usesu+300.,300.0) )
-        dates, sus = db.getusersu(db.project, year, quarter, user, 0.001)
+        dates, sus = db.getuserusage(db.project, year, quarter, user, 0.001)
         assert_array_almost_equal (sus, arange(0.0,(usesu+300.)/1000.,0.3) )
 
 def test_adduserstorage(db):

@@ -20,18 +20,19 @@ limitations under the License.
 
 from __future__ import print_function
 
-import sys
-import os
-import shutil
-import re
+import datetime
 import gzip
+import os
+import re
+import shutil
+import sys
 
 unit_base = { 'B' : 1024, 'SU' : 1000 }
 
 def extract_num_unit(s):
     # Match a number (possibly floating point 100.00 style) and a unit
     try:
-        size, unit = re.findall('(\d+.\d+|\d+)\s*(\D*)$',s)[0]
+        size, unit = re.findall(r'(\d+.\d+|\d+)\s*(\D*)$',s)[0]
     except:
         print('Failed to match size string: ',s)
         sys.exit()
@@ -100,3 +101,21 @@ def datetoyearquarter(date):
     # Convert month into year and quarter
     quarter = 'q{}'.format(int(((date.month) - 1) / 3) + 1)
     return year, quarter
+
+def date_range_from_quarter(year, quarter):
+    """
+    Convenience routine to return a valid date range for a quarter
+    when information not provided in a dump file as is case with 
+    gadi. Allows backwards compatibility. Hard coded date ranges.
+    """
+    lookup = {
+              'q1' : { 'smonth': 1, 'emonth': 3, 'sday': 1, 'eday': 31 },
+              'q2' : { 'smonth': 4, 'emonth': 6, 'sday': 1, 'eday': 30 },
+              'q3' : { 'smonth': 7, 'emonth': 9, 'sday': 1, 'eday': 30 },
+              'q4' : { 'smonth': 10, 'emonth': 12, 'sday': 1, 'eday': 31 }
+              }
+
+    return((
+            datetime.date(year,lookup[quarter]['smonth'],lookup[quarter]['sday']), 
+            datetime.date(year,lookup[quarter]['emonth'],lookup[quarter]['eday'])
+            ))

@@ -217,6 +217,22 @@ class ProjectDataset(object):
             id = q[-1]['id']
         return id
 
+    def addschemeusage(self, project, system, scheme, date, cputime, walltime, su):
+        """
+        Add a project usage entry by system and queue
+        """
+        project_id = self.addproject(project)
+        system_id = self.addsystem(system)
+        scheme_id = self.addscheme(scheme)
+        data = dict(project_id=project_id,
+                    system_id=system_id,
+                    scheme_id=scheme_id,
+                    date=date,
+                    usage_cpu=float(cputime),
+                    usage_wall=float(walltime),
+                    usage_su=float(su))
+        return self.db['SchemeUsage'].upsert(data, ['project_id', 'systemqueue_id', 'scheme_id', 'date'])
+
     def addprojectusage(self, project, system, queue, date, cputime, walltime, su):
         """
         Add a project usage entry by system and queue
@@ -231,19 +247,19 @@ class ProjectDataset(object):
                     usage_su=float(su))
         return self.db['ProjectUsage'].upsert(data, ['project_id', 'systemqueue_id', 'date'])
 
-    def addprojectstorage(self, project, system, storagepoint, date, grant, igrant):
+    def addprojectstorage(self, project, system, storagepoint, date, size, inodes):
         """
         Add a project storage entry by system and storage point
         """
         project_id = self.addproject(project)
         system_id = self.addsystem(system)
         storagepoint_id = self.addstoragepoint(system, storagepoint)
-        data = dict(project=project_id,
+        data = dict(project_id=project_id,
                     system_id=system_id,
                     storagepoint_id=storagepoint_id,
                     date=date,
-                    grant=float(grant),
-                    igrant=float(igrant))
+                    size=float(size),
+                    inodes=float(inodes))
         return self.db['ProjectStorage'].upsert(data, ['project_id', 'system_id', 'storagepoint_id', 'date'])
 
     def adduserusage(self, project, user, date, usecpu, usewall, usesu, efficiency):
@@ -300,14 +316,16 @@ class ProjectDataset(object):
             return None
         return float(q['allocation'])
 
-    def getprojectsu(self, project, year, quarter):
+    def getprojectusage(self, project, system, queue, year, quarter):
         project_id = self.addproject(project)
+        systemqueue_id = self.addsystemqueue(system, queue)
         startdate, enddate = self.getstartend(year, quarter)
         qstring = """SELECT date, SUM(usage_su) AS totsu FROM ProjectUsage 
-                     WHERE project={project} AND 
-                     date between '{start}' AND '{end}' 
+                     WHERE project_id={project}
+                     AND systemqueue_id={system}
+                     AND date between '{start}' AND '{end}' 
                      GROUP BY date ORDER BY date
-                     """.format(project=project_id, start=startdate, end=enddate)
+                     """.format(project=project_id, system=systemqueue_id, start=startdate, end=enddate)
         q = self.db.query(qstring)
         if q is None:
             return None
@@ -317,7 +335,28 @@ class ProjectDataset(object):
             usage.append(record["totsu"]/1000.)
         return dates, usage
 
-    def getusersu(self, project, year, quarter, user, scale=None):
+    def getschemeusage(self, project, system, scheme, year, quarter):
+        project_id = self.addproject(project)
+        system_id = self.addsystem(system)
+        scheme_id = self.addscheme(scheme)
+        startdate, enddate = self.getstartend(year, quarter)
+        qstring = """SELECT date, SUM(usage_su) AS totsu FROM SchemeUsage 
+                     WHERE project_id={project}
+                     AND system_id={system}
+                     AND scheme_id={scheme}
+                     AND date between '{start}' AND '{end}' 
+                     GROUP BY date ORDER BY date
+                     """.format(project=project_id, system=system_id, scheme=scheme_id, start=startdate, end=enddate)
+        q = self.db.query(qstring)
+        if q is None:
+            return None
+        dates = []; usage = []
+        for record in q:
+            dates.append(self.date2date(record["date"]))
+            usage.append(record["totsu"]/1000.)
+        return dates, usage
+
+    def getuserusage(self, project, year, quarter, user, scale=None):
         project_id = self.addproject(project)
         startdate, enddate = self.getstartend(year, quarter)
         user_id = self.adduser(user)
@@ -476,6 +515,31 @@ class ProjectDataset(object):
         system_id = self.addsystem(system)
         return self.db['SystemQueues'].find_one(system_id=system_id, queue=queue)
 
+    def getquarter(self):
+        """
+        Return (year, quarter) for the most recent entry in the DB table Quarters
+        """
+        q = self.db['Quarters'].find_one(order_by=['-year','-quarter'])
+        return q['year'], q['quarter'] 
+
+    def getsystems(self):
+        """
+        Return list of systems
+        """
+        return [d['system'] for d in self.db['Systems'].find()]
+
+    def getschemes(self):
+        """
+        Return list of schemes
+        """
+        return [d['scheme'] for d in self.db['Schemes'].find()]
+
+    def getprojects(self):
+        """
+        Return list of projects
+        """
+        return [d['project'] for d in self.db['Projects'].find()]
+
     def date2date(self, datestring):
 
         if type(datestring) == datetime.date:
@@ -528,6 +592,20 @@ class ProjectDataset(object):
             return (None,None)
         return float(q['grant']),float(q['igrant'])
 
+    def getprojectstorage(self, project, system, storagepoint):
+        """
+        Add a project storage entry by system and storage point
+        """
+        project_id = self.addproject(project)
+        system_id = self.addsystem(system)
+        storagepoint_id = self.addstoragepoint(system, storagepoint)
+        data = dict(project_id=project_id,
+                    system_id=system_id,
+                    storagepoint_id=storagepoint_id)
+        q = self.db['ProjectStorage'].find_one(**data)
+        if q is None:
+            return (None,None)
+        return float(q['size']),float(q['inodes'])
 
     def top_usage(self, year, quarter, storagepoint, measure='size', count=10, scale=1):
         """
