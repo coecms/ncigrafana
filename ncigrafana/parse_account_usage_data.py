@@ -72,6 +72,10 @@ def parse_account_dump_file(filename, verbose, db=None, dburl=None):
 
                 if resources['status'] == 200:
                     project = resources['project']
+                else:
+                    parsing = False
+                    print('Error {code}: {msg}'.format(code=resources['status'], msg=resources['message']))
+                    continue
 
                 system = 'gadi'
                 # Make a bogus queue name called combine while we have no breakdown of usage by queue
