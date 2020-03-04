@@ -138,7 +138,6 @@ def parse_args(args):
     Parse arguments given as list (args)
     """
     parser = argparse.ArgumentParser(description="Parse file report dumps")
-    parser.add_argument("-d","--directory", help="Specify directory to find dump files", default=".")
     parser.add_argument("-v","--verbose", help="Verbose output", action='store_true')
     parser.add_argument("-db","--dburl", help="Database file url", default=None)
     parser.add_argument("-n","--noarchive", help="Database file url", action='store_true')
