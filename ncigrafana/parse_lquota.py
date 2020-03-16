@@ -126,7 +126,7 @@ def main(args):
 
     for f in args.inputs:
         try:
-            parse_file_report(f, verbose, db=db)
+            parse_lquota(f, verbose, db=db)
         except:
             raise
         else:
