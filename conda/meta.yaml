@@ -21,6 +21,11 @@ requirements:
         - dataset
         - Psycopg2 
         - sqlalchemy
+    entry_points:
+        - parse_user_storage_data = ncigrafana.parse_user_storage_data:main_argv
+        - parse_account_usage_data = ncigrafana.parse_account_usage_data:main_argv
+        - nci_account_json = ncigrafana.nci_account:main_argv
+        - parse_lquota_data = ncigrafana.parse_lquota:main_argv
 
 test:
     imports:
@@ -35,3 +40,5 @@ test:
 
 about:
     home: https://github.com/coecms/ncigrafana
+
+
