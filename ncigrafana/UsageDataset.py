@@ -84,6 +84,9 @@ class ProjectDataset(object):
         Add a unique quarter
         Return a unique id
         """
+        # Ensure year is a string, to match SQL table type
+        if not isinstance(year, str):
+            year = str(year)
         q = self.db['Quarters'].find_one(year=year,quarter=quarter)
         if q is None:
             if startdate is None or enddate is None:
@@ -518,9 +521,10 @@ class ProjectDataset(object):
     def getquarter(self):
         """
         Return (year, quarter) for the most recent entry in the DB table Quarters
+        Make sure to cast year to integer as it is stored as a string in the postgres DB
         """
         q = self.db['Quarters'].find_one(order_by=['-year','-quarter'])
-        return q['year'], q['quarter'] 
+        return int(q['year']), q['quarter'] 
 
     def getsystems(self):
         """
