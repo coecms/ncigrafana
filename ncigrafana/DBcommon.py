@@ -97,7 +97,11 @@ def archive(filepath,archive_dir='archive'):
             print("Error removing ",filepath)
 
 def datetoyearquarter(date):
-    year = date.year
+    """Return NCI style year, quarter from date"""
+
+    # Year needs to be a string as SQL field is string
+    year = str(date.year)
+
     # Convert month into year and quarter
     quarter = 'q{}'.format(int(((date.month) - 1) / 3) + 1)
     return year, quarter
