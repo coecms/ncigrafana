@@ -28,28 +28,24 @@ import sys
 import re
 import shutil
 from .UsageDataset import *
-from .DBcommon import extract_num_unit, parse_size, mkdir, archive, datetoyearquarter
+from .DBcommon import extract_num_unit, parse_size, mkdir, archive
+from .DBcommon import date_range_from_quarter, datetoyearquarter
 
 databases = {}
 dbfileprefix = '.'
 
 def parse_file_report(filename, verbose, db=None, dburl=None):
 
-    project = None
-
-    # Filename contains storage point information
-    storagepoint = filename.split('.')[2]
-
-    # Little hack so we get the correct gdata mount point
-    if storagepoint == 'gdata1':
-        storagepoint = 'gdata1a'
+    # Filename contains project and storage point information
+    (timestamp, project, storagepoint, tmp) = os.path.basename(filename).split('.')
 
     # Hard code the system based on storagepoint as this information
-    # does not exist in the dumpfile
+    # does not exist in the dumpfile. Not even sure NCI make this distinction
+    # any longer, but we need this information for the database
     if storagepoint.startswith('gdata'):
         system = 'global'
-    elif storagepoint == 'short':
-        system = 'raijin'
+    elif storagepoint == 'scratch':
+        system = 'gadi'
 
     with open(filename) as f:
 
@@ -63,25 +59,23 @@ def parse_file_report(filename, verbose, db=None, dburl=None):
                 # Grab date string
                 date = datetime.datetime.strptime(f.readline().strip(os.linesep), "%a %b %d %H:%M:%S %Z %Y")
                 year, quarter = datetoyearquarter(date)
-                continue
-
-            if line.startswith("Usage details for project"):
-                project = line.split()[4].strip(':')
+                startdate, enddate = date_range_from_quarter(year,quarter)
+                db.addquarter(year, quarter, startdate, enddate)
+                parsing_usage = True
                 # Gobble the three header lines
                 line = f.readline(); line = f.readline(); line = f.readline()
-                parsing_usage = True
                 continue
 
             if parsing_usage:
                 try:
-                    (folder,user,size,inodes,scandate) = line.strip(os.linesep).split() 
+                    (folder,user,size,filesize,inodes) = line.strip(os.linesep).split() 
                 except:
                     if verbose: print('Finished parsing short usage')
                     parsing_usage = False
                     continue
                 db.adduser(user)
-                if verbose: print('Adding ', system, storagepoint, project, folder, user, size, inodes, scandate)
-                db.adduserstorage(project, user, system, storagepoint, scandate, folder, parse_size(size.upper()), inodes)
+                if verbose: print('Adding ', system, storagepoint, project, folder, user, size, inodes, date)
+                db.adduserstorage(project, user, system, storagepoint, date, folder, parse_size(size.upper()), inodes)
 
 def main(args):
 
