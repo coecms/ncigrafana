@@ -202,10 +202,10 @@ def test_getstorage(db):
     system = 'deepblue'
     year = 1984; quarter = 'q3'
     
-    dp = db.getstorage(db.project, year, quarter, storagept='array1', datafield='size')
+    dp = db.getstorage(db.project, year, quarter, system, storagepoint='array1', datafield='size')
     assert(dp['Winston Smith (wxs1984)'].sum() == 131950000.0)
 
-    dp = db.getstorage(db.project, year, quarter, storagept='array1', datafield='inodes')
+    dp = db.getstorage(db.project, year, quarter, system, storagepoint='array1', datafield='inodes')
     assert(dp['Big Brother (bxb1984)'].sum() == 410865.0)
 
 def test_getstoragepoints(db):
