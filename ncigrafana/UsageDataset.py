@@ -440,8 +440,11 @@ class ProjectDataset(object):
         return df
 
 
-    def getstorage(self, project, year, quarter, storagept='short', datafield='size', namefield='user+name'):
+    def getstorage(self, project, year, quarter, systemname, storagepoint='scratch', datafield='size', namefield='user+name'):
 
+        project_id = self.addproject(project)
+        system_id = self.addsystem(systemname)
+        storagepoint_id = self.addstoragepoint(systemname, storagepoint)
         startdate, enddate = self.getstartend(year, quarter)
 
         table = 'UserStorage'
@@ -460,14 +463,23 @@ class ProjectDataset(object):
         FROM {table}
         LEFT JOIN Users ON {table}.user_id = Users.id
         WHERE scandate between \'{start}\' AND \'{end}\'
+        AND project_id = {project_id}
+        AND storagepoint_id = {storagepoint_id}
         GROUP BY Name, Date
         ORDER BY Date"""
 
         # Pivot makes columns of all the individuals, rows are indexed by date
         try:
-            df = pd.read_sql_query(qstring.format(namefield=name_sql,datafield=datafield,table=table,start=startdate,end=enddate), self.db.executable).pivot_table(index='Date',columns='Name',fill_value=0)
+            df = pd.read_sql_query(qstring.format(namefield=name_sql,
+                                                  datafield=datafield,
+                                                  table=table,
+                                                  project_id=project_id,
+                                                  storagepoint_id=storagepoint_id,
+                                                  start=startdate,
+                                                  end=enddate), 
+                                   self.db.executable).pivot_table(index='Date', columns='Name', fill_value=0)
         except:
-            print("No data available for {}".format(storagept))
+            print("No data available for {}".format(storagepoint))
             return None
             
         # Get rid of the totsize labels in the multiindex
