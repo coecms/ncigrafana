@@ -77,7 +77,7 @@ def parse_file_report(filename, verbose, db=None, dburl=None):
                 db.adduser(user)
                 if verbose: print('Adding ', print(project, user, system, storagepoint, 
                                                    str(date), folder, 
-                                                   parse_size(size.upper()), inodes)
+                                                   parse_size(size.upper()), inodes))
                 db.adduserstorage(project, 
                                   user, 
                                   system, 
