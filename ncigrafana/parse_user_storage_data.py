@@ -57,7 +57,8 @@ def parse_file_report(filename, verbose, db=None, dburl=None):
             if verbose: print("> ",line)
             if line.startswith("%%%%%%%%%%%%%%%%"):
                 # Grab date string
-                date = datetime.datetime.strptime(f.readline().strip(os.linesep), "%a %b %d %H:%M:%S %Z %Y")
+                date = datetime.datetime.strptime(f.readline().strip(os.linesep), 
+                                                  "%a %b %d %H:%M:%S %Z %Y").date()
                 year, quarter = datetoyearquarter(date)
                 startdate, enddate = date_range_from_quarter(year,quarter)
                 db.addquarter(year, quarter, startdate, enddate)
@@ -74,8 +75,17 @@ def parse_file_report(filename, verbose, db=None, dburl=None):
                     parsing_usage = False
                     continue
                 db.adduser(user)
-                if verbose: print('Adding ', system, storagepoint, project, folder, user, size, inodes, date)
-                db.adduserstorage(project, user, system, storagepoint, date, folder, parse_size(size.upper()), inodes)
+                if verbose: print('Adding ', print(project, user, system, storagepoint, 
+                                                   str(date), folder, 
+                                                   parse_size(size.upper()), inodes))
+                db.adduserstorage(project, 
+                                  user, 
+                                  system, 
+                                  storagepoint, 
+                                  str(date), 
+                                  folder, 
+                                  parse_size(size.upper()), 
+                                  inodes)
 
 def main(args):
 
