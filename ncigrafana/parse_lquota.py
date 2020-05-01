@@ -53,7 +53,8 @@ def parse_lquota(filename, verbose, db=None, dburl=None):
             if verbose: print("> ",line)
             if line.startswith("%%%%%%%%%%%%%%%%"):
                 # Grab date string
-                date = datetime.datetime.strptime(f.readline().strip(os.linesep), "%a %b %d %H:%M:%S %Z %Y")
+                date = datetime.datetime.strptime(f.readline().strip(os.linesep), 
+                                                  "%a %b %d %H:%M:%S %Z %Y")
                 year, quarter = datetoyearquarter(date)
                 startdate, enddate = date_range_from_quarter(year,quarter)
                 db.addquarter(year, quarter, startdate, enddate)
@@ -98,13 +99,13 @@ def parse_lquota(filename, verbose, db=None, dburl=None):
                 if verbose: print('Add project storage grant', project, system, storagepoint, scheme, 
                                    year, quarter, date, storagetype, size_quota)
                 db.addstoragegrant(project, system, storagepoint, scheme, year, quarter, 
-                                           date, storagetype, size_quota)
+                                           str(date.date()), storagetype, size_quota)
 
                 storagetype = 'inodes'
                 if verbose: print('Add project storage grant', project, system, storagepoint, scheme, 
                                    year, quarter, date, storagetype, inodes_quota)
                 db.addstoragegrant(project, system, storagepoint, scheme, year, quarter, 
-                                           date, storagetype, inodes_quota)
+                                           str(date.date()), storagetype, inodes_quota)
 
 """
 -----------------------------------------------------------------------
