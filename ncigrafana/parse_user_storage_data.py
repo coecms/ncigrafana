@@ -84,7 +84,7 @@ def parse_file_report(filename, verbose, db=None, dburl=None):
                                   storagepoint, 
                                   str(date), 
                                   folder, 
-                                  parse_size(size.upper()), 
+                                  parse_size(size.upper(), u=''), 
                                   inodes)
 
 def main(args):
