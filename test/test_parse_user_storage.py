@@ -20,6 +20,7 @@ from ncigrafana.parse_user_storage_data import parse_file_report
 os.environ['TZ'] = 'AEST-10AEDT-11,M10.5.0,M3.5.0'
 time.tzset()
 dbfileprefix = '.'
+verbose = False
 
 @pytest.fixture(scope='session')
 def db():
@@ -30,8 +31,8 @@ def db():
 
 def test_parse_lquota(db):
 
-    parse_file_report('test/2020-04-16T08:34:58.w35.scratch.dump', verbose=True, db=db)
-    parse_file_report('test/2020-04-16T08:34:58.w35.gdata.dump', verbose=True, db=db)
+    parse_file_report('test/2020-04-16T08:34:58.w35.scratch.dump', verbose=verbose, db=db)
+    parse_file_report('test/2020-04-16T08:34:58.w35.gdata.dump', verbose=verbose, db=db)
 
 def test_getstoragepoints(db):
 

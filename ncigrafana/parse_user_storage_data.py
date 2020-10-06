@@ -63,21 +63,21 @@ def parse_file_report(filename, verbose, db=None, dburl=None):
                 startdate, enddate = date_range_from_quarter(year,quarter)
                 db.addquarter(year, quarter, startdate, enddate)
                 parsing_usage = True
-                # Gobble the three header lines
-                line = f.readline(); line = f.readline(); line = f.readline()
+                # Gobble header line
+                line = f.readline()
                 continue
 
             if parsing_usage:
                 try:
-                    (folder,user,size,filesize,inodes) = line.strip(os.linesep).split() 
+                    (filesystem,scandate,proj,folder,user,size,filesize,inodes) = line.strip(os.linesep).split() 
                 except:
                     if verbose: print('Finished parsing short usage')
                     parsing_usage = False
                     continue
                 db.adduser(user)
-                if verbose: print('Adding ', print(project, user, system, storagepoint, 
+                if verbose: print('Adding ', project, user, system, storagepoint, 
                                                    str(date), folder, 
-                                                   parse_size(size.upper()), inodes))
+                                                   parse_size(size.upper()), inodes)
                 db.adduserstorage(project, 
                                   user, 
                                   system, 
