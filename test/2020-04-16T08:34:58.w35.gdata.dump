@@ -1,46 +1,40 @@
 %%%%%%%%%%%%%%%%
 Thu Apr 16 08:34:58 AEST 2020
-------------------------------------------------------------------------------
-         project             user     space used      file size          count
-------------------------------------------------------------------------------
-             ua8           pxp581         1236GB         1236GB           2873
-             w35           pxp581         2368MB         2157MB         112349
-             w40           saw562          330GB          330GB           2233
-          access           saw562         2719MB         2658MB          30611
-             ua8           saw562          868kB          855kB              6
-             w35           saw562         6526GB         6534GB         247010
-      access.dev           saw562         3004kB         2197kB            421
-             w35           ccc561         1762GB         1762GB         128209
-            sx70           ccc561         28.1MB         28.1MB              1
-             v45           aph502          604kB          248kB             95
-             w35           aph502         4014MB         4013MB            150
-          access           hxw599         14.7MB         14.5MB            173
-             w35           hxw599         94.6GB         99.4GB            129
-             w35           dei561         2780kB         2766kB              7
-             hh5           ccc561          356kB          272kB             28
-             w97           ccc561          692kB          689kB              1
-             hh5           saw562         5848kB         5824kB             15
-------------------------------------------------------------------------------
+FILESYSTEM  SCAN DATE   PROJECT  GROUP       USER    SPACE USED  TOTAL SIZE  COUNT                          
+gdata       2020-04-16  w35      ua8         pxp581      1236GB      1236GB  2873
+gdata       2020-04-16  w35      w35         pxp581      2368MB      2157MB  112349
+gdata       2020-04-16  w35      w40         saw562       330GB       330GB  2233
+gdata       2020-04-16  w35      access      saw562      2719MB      2658MB  30611
+gdata       2020-04-16  w35      ua8         saw562       868kB       855kB  6
+gdata       2020-04-16  w35      w35         saw562      6526GB      6534GB  247010
+gdata       2020-04-16  w35      access.dev  saw562      3004kB      2197kB  421
+gdata       2020-04-16  w35      w35         ccc561      1762GB      1762GB  128209
+gdata       2020-04-16  w35      sx70        ccc561      28.1MB      28.1MB  1
+gdata       2020-04-16  w35      v45         aph502       604kB       248kB  95
+gdata       2020-04-16  w35      w35         aph502      4014MB      4013MB  150
+gdata       2020-04-16  w35      access      hxw599      14.7MB      14.5MB  173
+gdata       2020-04-16  w35      w35         hxw599      94.6GB      99.4GB  129
+gdata       2020-04-16  w35      w35         dei561      2780kB      2766kB  7
+gdata       2020-04-16  w35      hh5         ccc561       356kB       272kB  28
+gdata       2020-04-16  w35      w97         ccc561       692kB       689kB  1
+gdata       2020-04-16  w35      hh5         saw562      5848kB      5824kB  15
 %%%%%%%%%%%%%%%%
 Fri Apr 17 08:34:58 AEST 2020
-------------------------------------------------------------------------------
-         project             user     space used      file size          count
-------------------------------------------------------------------------------
-             ua8           pxp581         1236GB         1236GB           2873
-             w35           pxp581         2368MB         2157MB         112349
-             w40           saw562          330GB          330GB           2233
-          access           saw562         2719MB         2658MB          30611
-             ua8           saw562          868kB          855kB              6
-             w35           saw562         6526GB         6534GB         247010
-      access.dev           saw562         3004kB         2197kB            421
-             w35           ccc561         1762GB         1762GB         128209
-            sx70           ccc561         28.1MB         28.1MB              1
-             v45           aph502          604kB          248kB             95
-             w35           aph502         4014MB         4013MB            150
-          access           hxw599         14.7MB         14.5MB            173
-             w35           hxw599         94.6GB         99.4GB            129
-             w35           dei561         2780kB         2766kB              7
-             hh5           ccc561          356kB          272kB             28
-             w97           ccc561          692kB          689kB              1
-             hh5           saw562         5848kB         5824kB             15
-------------------------------------------------------------------------------
+FILESYSTEM  SCAN DATE   PROJECT  GROUP       USER    SPACE USED  TOTAL SIZE  COUNT                          
+gdata       2020-04-16  w35      ua8         pxp581      1236GB      1236GB  2873
+gdata       2020-04-16  w35      w35         pxp581      2368MB      2157MB  112349
+gdata       2020-04-16  w35      w40         saw562       330GB       330GB  2233
+gdata       2020-04-16  w35      access      saw562      2719MB      2658MB  30611
+gdata       2020-04-16  w35      ua8         saw562       868kB       855kB  6
+gdata       2020-04-16  w35      w35         saw562      6526GB      6534GB  247010
+gdata       2020-04-16  w35      access.dev  saw562      3004kB      2197kB  421
+gdata       2020-04-16  w35      w35         ccc561      1762GB      1762GB  128209
+gdata       2020-04-16  w35      sx70        ccc561      28.1MB      28.1MB  1
+gdata       2020-04-16  w35      v45         aph502       604kB       248kB  95
+gdata       2020-04-16  w35      w35         aph502      4014MB      4013MB  150
+gdata       2020-04-16  w35      access      hxw599      14.7MB      14.5MB  173
+gdata       2020-04-16  w35      w35         hxw599      94.6GB      99.4GB  129
+gdata       2020-04-16  w35      w35         dei561      2780kB      2766kB  7
+gdata       2020-04-16  w35      hh5         ccc561       356kB       272kB  28
+gdata       2020-04-16  w35      w97         ccc561       692kB       689kB  1
+gdata       2020-04-16  w35      hh5         saw562      5848kB      5824kB  15

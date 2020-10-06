@@ -20,6 +20,7 @@ from ncigrafana.parse_account_usage_data import parse_account_dump_file
 os.environ['TZ'] = 'AEST-10AEDT-11,M10.5.0,M3.5.0'
 time.tzset()
 dbfileprefix = '.'
+verbose = False
 
 @pytest.fixture(scope='session')
 def db():
@@ -30,7 +31,7 @@ def db():
 
 def test_parse_lquota(db):
 
-    parse_account_dump_file('test/nci_account.log', verbose=True, db=db)
+    parse_account_dump_file('test/nci_account.log', verbose=verbose, db=db)
 
 # def test_getstoragepoints(db):
 # 
