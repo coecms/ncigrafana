@@ -11,6 +11,7 @@ scratch     2020-04-16  w35      w35     pxp581       1810M       1810M  8
 scratch     2020-04-16  w35      w35     dei561       5706M       5656M  47629
 scratch     2020-04-16  w35      v45     aph502        795M        785M  11137
 scratch     2020-04-16  w35      w35     aph502       3424K       3277K  87
+scratch     2020-04-16  w35      w97     aph502          0B          0B  0
 %%%%%%%%%%%%%%%%
 Fri Apr 17 08:34:58 AEST 2020
 FILESYSTEM  SCAN DATE   PROJECT  GROUP   USER    SPACE USED  TOTAL SIZE  COUNT
@@ -24,3 +25,4 @@ scratch     2020-04-16  w35      w35     pxp581       1810M       1810M  8
 scratch     2020-04-16  w35      w35     dei561       5706M       5656M  47629
 scratch     2020-04-16  w35      v45     aph502        795M        785M  11137
 scratch     2020-04-16  w35      w35     aph502       3424K       3277K  87
+scratch     2020-04-16  w35      w97     aph502          0B          0B  0
