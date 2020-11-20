@@ -69,15 +69,14 @@ def parse_file_report(filename, verbose, db=None, dburl=None):
 
             if parsing_usage:
                 try:
-                    (filesystem,scandate,proj,folder,user,size,filesize,inodes) = line.strip(os.linesep).split() 
+                    (filesystem,scandate,folder,proj,user,size,filesize,inodes) = line.strip(os.linesep).split() 
                 except:
                     if verbose: print('Finished parsing short usage')
                     parsing_usage = False
                     continue
                 db.adduser(user)
-                if verbose: print('Adding ', project, user, system, storagepoint, 
-                                                   str(date), folder, 
-                                                   parse_size(size.upper()), inodes)
+                if verbose: print('Adding ', project, user, system, storagepoint, str(date), folder, 
+                                             parse_size(size.upper(), u='', pre='BKMGTPEZY'), inodes)
                 db.adduserstorage(project, 
                                   user, 
                                   system, 
