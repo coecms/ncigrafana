@@ -1,28 +1,28 @@
 %%%%%%%%%%%%%%%%
 Thu Apr 16 08:34:58 AEST 2020
 FILESYSTEM  SCAN DATE   PROJECT  GROUP   USER    SPACE USED  TOTAL SIZE  COUNT
-scratch     2020-04-16  w35      w35     mjl561       76.2G       76.2G  3495
-scratch     2020-04-16  w35      access  saw562       28.0K       21.8K  3
-scratch     2020-04-16  w35      ly62    saw562       6721G       6721G  15
-scratch     2020-04-16  w35      w35     saw562       30.3T       30.3T  1045201
-scratch     2020-04-16  w35      w35     ccc561        610G        612G  77768
-scratch     2020-04-16  w35      public  ccc561        172K        169K  1
-scratch     2020-04-16  w35      w35     pxp581       1810M       1810M  8
-scratch     2020-04-16  w35      w35     dei561       5706M       5656M  47629
-scratch     2020-04-16  w35      v45     aph502        795M        785M  11137
-scratch     2020-04-16  w35      w35     aph502       3424K       3277K  87
-scratch     2020-04-16  w35      w97     aph502          0B          0B  0
+scratch     2020-04-16  w35     w35      mjl561       76.2G       76.2G  3495
+scratch     2020-04-16  access  w35      saw562       28.0K       21.8K  3
+scratch     2020-04-16  ly62    w35      saw562       6721G       6721G  15
+scratch     2020-04-16  w35     w35      saw562       30.3T       30.3T  1045201
+scratch     2020-04-16  w35     w35      ccc561        610G        612G  77768
+scratch     2020-04-16  public  w35      ccc561        172K        169K  1
+scratch     2020-04-16  w35     w35      pxp581       1810M       1810M  8
+scratch     2020-04-16  w35     w35      dei561       5706M       5656M  47629
+scratch     2020-04-16  v45     w35      aph502        795M        785M  11137
+scratch     2020-04-16  w35     w35      aph502       3424K       3277K  87
+scratch     2020-04-16  w97     w35      aph502          0B          0B  0
 %%%%%%%%%%%%%%%%
 Fri Apr 17 08:34:58 AEST 2020
 FILESYSTEM  SCAN DATE   PROJECT  GROUP   USER    SPACE USED  TOTAL SIZE  COUNT
-scratch     2020-04-16  w35      w35     mjl561       76.2G       76.2G  3495
-scratch     2020-04-16  w35      access  saw562       28.0K       21.8K  3
-scratch     2020-04-16  w35      ly62    saw562       6721G       6721G  15
-scratch     2020-04-16  w35      w35     saw562       30.3T       30.3T  1045201
-scratch     2020-04-16  w35      w35     ccc561        610G        612G  77768
-scratch     2020-04-16  w35      public  ccc561        172K        169K  1
-scratch     2020-04-16  w35      w35     pxp581       1810M       1810M  8
-scratch     2020-04-16  w35      w35     dei561       5706M       5656M  47629
-scratch     2020-04-16  w35      v45     aph502        795M        785M  11137
-scratch     2020-04-16  w35      w35     aph502       3424K       3277K  87
-scratch     2020-04-16  w35      w97     aph502          0B          0B  0
+scratch     2020-04-17  w35     w35      mjl561       76.2G       76.2G  3495
+scratch     2020-04-17  access  w35      saw562       28.0K       21.8K  3
+scratch     2020-04-17  ly62    w35      saw562       6721G       6721G  15
+scratch     2020-04-17  w35     w35      saw562       30.3T       30.3T  1045201
+scratch     2020-04-17  w35     w35      ccc561        610G        612G  77768
+scratch     2020-04-17  public  w35      ccc561        172K        169K  1
+scratch     2020-04-17  w35     w35      pxp581       1810M       1810M  8
+scratch     2020-04-17  w35     w35      dei561       5706M       5656M  47629
+scratch     2020-04-17  v45     w35      aph502        795M        785M  11137
+scratch     2020-04-17  w35     w35      aph502       3424K       3277K  87
+scratch     2020-04-17  w97     w35      aph502          0B          0B  0
