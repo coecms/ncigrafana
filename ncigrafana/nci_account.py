@@ -28,7 +28,7 @@ import requests
 import sys
 import urllib
 
-SERVER='http://gadi-pbs-01.gadi.nci.org.au:8811/'
+SERVER='http://gadi-pbs-01.gadi.nci.org.au:8811/v0/nciaccount/'
 
 def get_resource(project):
     """
