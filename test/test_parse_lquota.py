@@ -44,9 +44,9 @@ def test_getstorage(db):
     system = 'gadi'
     project = 'vv5'
     dp = db.getprojectstorage(project, system, 'scratch')
-    assert dp == (21506447439298.56, 9107665.0)
+    assert dp == (20510146.56, 9107665.0)
     dp = db.getprojectstorage(project, system, 'gdata')
-    assert dp == (173766817653719.03, 7156412.0)
+    assert dp == (161832.96, 7156412.0)
 
     project = 'wv0'
     dp = db.getprojectstorage(project, system, 'scratch')
