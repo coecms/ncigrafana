@@ -33,6 +33,7 @@ from .DBcommon import datetoyearquarter, date_range_from_quarter
 
 databases = {}
 dbfileprefix = '.'
+nfields = 12
 
 def parse_lquota(filename, verbose, db=None, dburl=None):
 
@@ -60,30 +61,31 @@ def parse_lquota(filename, verbose, db=None, dburl=None):
                 db.addquarter(year, quarter, startdate, enddate)
                 continue
 
-            if line.startswith("           fs      Usage     Quota     Limit   iUsage   iQuota   iLimit"): 
+            if line.lstrip().startswith("fs"): 
                 # Gobble the other header
                 line = f.readline()
                 parsing_usage = True
                 continue
 
             if parsing_usage:
-                try:
-                    array = line.strip(os.linesep).split(maxsplit=8)
-                    project = array[0]
-                    storagepoint = array[1]
-                    size = parse_size(array[2].upper())
-                    size_quota = parse_size(array[3].upper())
-                    size_limit = parse_size(array[4].upper())
-                    inodes = int(array[5])
-                    inodes_quota = int(array[6])
-                    inodes_limit = int(array[7])
-                except:
+
+                if line.startswith('-----------'):
                     if verbose: print('Finished parsing short usage')
                     parsing_usage = False
                     continue
 
-                if len(array) == 8:
-                    msg = array[7]
+                array = line.strip(os.linesep).split(maxsplit=nfields)
+                project = array[0]
+                storagepoint = array[1]
+                size = parse_size((array[2]+array[3]), b=1024, u='iB')
+                size_quota = parse_size((array[4]+array[5]), b=1024, u='iB')
+                size_limit = parse_size((array[6]+array[7]), b=1024, u='iB')
+                inodes = int(array[8])
+                inodes_quota = int(array[9])
+                inodes_limit = int(array[10])
+
+                if len(array) == nfields:
+                    msg = array[nfields-1]
                 else:
                     msg = None
 
@@ -108,13 +110,14 @@ def parse_lquota(filename, verbose, db=None, dburl=None):
                                            str(date.date()), storagetype, inodes_quota)
 
 """
------------------------------------------------------------------------
-           fs      Usage     Quota     Limit   iUsage   iQuota   iLimit
------------------------------------------------------------------------
-   p05 scratch  265.56GB   270.0GB   540.0GB    47728   500000  1000000
-   c25 scratch    2.76MB   200.0GB   400.0GB      710   200000   400000
-   e14 scratch   10.92TB   33.95TB   67.89TB   870421  3109000  6218000
-   e53 scratch   215.7TB   250.0TB   500.0TB   558822  8072000 16144000
+--------------------------------------------------------------------------
+           fs       Usage      Quota      Limit   iUsage   iQuota   iLimit
+--------------------------------------------------------------------------
+   vv5 scratch  19.56 TiB  109.0 TiB  218.0 TiB  9107665 44223147 88446294
+   wv0 scratch   7.19 TiB  10.99 TiB  21.97 TiB   703700  1097000  2194000
+   vv5   gdata 158.04 TiB 158.95 TiB 166.89 TiB  7156412  8468000  8891400
+   wv0   gdata  76.21 TiB   80.0 TiB   84.0 TiB  1805324  5465000  5738250
+--------------------------------------------------------------------------
 """
 
 def main(args):
