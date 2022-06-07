@@ -48,7 +48,7 @@ def test_getstorage(db):
     dp = db.getprojectstorage(project, system, 'gdata')
     assert dp == (161832.96, 7156412.0)
 
-    project = 'wv0'
+    project = 'fs0'
     dp = db.getprojectstorage(project, system, 'scratch')
     assert dp == (7905488603709.44, 703700.0)
     dp = db.getprojectstorage(project, system, 'gdata')

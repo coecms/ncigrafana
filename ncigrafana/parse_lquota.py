@@ -61,7 +61,7 @@ def parse_lquota(filename, verbose, db=None, dburl=None):
                 db.addquarter(year, quarter, startdate, enddate)
                 continue
 
-            if line.lstrip().startswith("fs"): 
+            if line.lstrip().startswith("fs") and line.rstrip().endswith("iLimit"): 
                 # Gobble the other header
                 line = f.readline()
                 parsing_usage = True
