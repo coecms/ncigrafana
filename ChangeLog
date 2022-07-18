@@ -1,22 +1,154 @@
 CHANGES
 =======
 
-* Made entry points for DB updating scripts in setup.py and corresponding functions in scripts
-* Added fullname output to nci\_usage, and an option for separator to crudely create csv output
+* Altered test data to match change in scratch accounting
+* Swap project and folder codes to account for scratch accounting change
 
 0.3.2
 -----
 
-* Updated README with current module load instructions
+* Added additional condition for ending string to detect header line. (#20)
 
 0.3.1
 -----
 
-*     Reindex storage dataframes to ensure there are values from the start     of each quarter
+* Fix for updated lquota formatting (#18)
+* Updated server url (#16)
 
-0.3
+0.2.13
+------
+
+* Fix parsing error with storage outputs (#14)
+
+0.2.12
+------
+
+* Added support for inconsistent units
+
+0.2.11
+------
+
+* Fixed bug parsing new storage format. No longer have units in size
+
+0.2.10
+------
+
+* Change to new nci-files-report format. Updated tests. (#12)
+
+0.2.9
+-----
+
+* Cast datetime to date string for updating storage grants (#10)
+
+0.2.8
+-----
+
+* Ensure date string for DB update (#8)
+
+0.2.7
+-----
+
+* Add support for nci-files-report parsing (#6)
+
+0.2.6
+-----
+
+* Make year a string (#4)
+
+0.2.5
+-----
+
+* Fixed issue with has\_prefix\_files
+
+0.2.4
+-----
+
+* Add has\_prefix\_files to conda meta
+
+0.2.3
+-----
+
+* Added entry points to conda directly to try and solve python interp path issue
+
+0.2.2
+-----
+
+* Fixed error in call to parse\_lquota
+
+0.2.1
+-----
+
+* Gadi fix (#3)
+
+0.2.0
+-----
+
+* Update to support gadi stats capture (#2)
+
+0.1.3
+-----
+
+* Changed parsing of compute grants to include units
+
+0.1.2
+-----
+
+* Fixed length of header string
+
+0.1.1
+-----
+
+* Fixed bug in archive routine triggered with non-local access
+* Updated travis and conda configs
+
+0.1
 ---
 
+* Updated README
+* Removed old ncimontor code
+* Moved ncimonitor subdirectory to ncigrafana
+* Added project to default stdout
+* Fixed called to getpwnam
+* Updated query functions so that tests pass. Still some old code but that is currently not tested
+* Init uid and gid vars before use
+* Added uid and gid fields to User table/parsing
+* Updated gitignore
+* Added more logic to remove redundant StorageGrant entries
+* Fixed error in addstoragepoint, used incorrect keyword "system"
+* Forgot to remove gdata parsing script. Fixed
+* Removed old parsing scripts
+* Added two new parsing routines to support the new DB structure
+* Add new tables: Schemes, Systems, UsageGrants, StorageGrants and StoragePoints
+* Add efficiency to user usage table
+* All parse scripts now working
+* Adding project fields into some tables. Also making quarter a foreign key for some tables
+* Changed parsing of short\_files\_report to a flag/state approach to get rid of the try/except block that was catching errors and silently aborting
+* Change next calls to readline for python3 compat
+* Add db url option
+* Jobs (#23)
+* Update usage (#22)
+* Add percentage output (#19)
+* Converted nci\_usage to using pandas dataframe output. (#17)
+* arcive path
+* Change working dir
+* Install path
+* Clean install conda
+* Update conda
+* Syntax
+* Drop python 2 support
+* move usage query to dataset
+* update for dataset 1.1.2
+* Fixed relative imports in nci\_monitor.py, which meant it could not be run from the install directory
+* Fixed error in make\_gdata\_DB and make\_short\_DB, calling incorrect parsing function
+* Fixed badges
+* Removed unicode characters from README
+* Added pbr build dependecy for circleci
+* Added python3.6 to travis testing
+* Moved to pbr for packaging
+* Made entry points for DB updating scripts in setup.py and corresponding functions in scripts
+* Added fullname output to nci\_usage, and an option for separator to crudely create csv output
+* Updated README with current module load instructions
+*     Reindex storage dataframes to ensure there are values from the start     of each quarter
 * Fix variable scoping
 * Put the flag on the wrong line
 * Add coecms channel for dataset package
@@ -31,10 +163,6 @@ CHANGES
 * Check for data lookup errors and don't try and plot
 * Allow datetime objects in database when they creep in
 * Add a command to list usage in the terminal
-
-0.2
----
-
 * Delta plots were being chopped off below zero. Fixed
 * Python 3 print statements fixed in make scripts
 * Removed spurious pip install and 3.5 build (which had dependency issues)
