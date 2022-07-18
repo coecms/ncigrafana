@@ -71,10 +71,15 @@ def parse_file_report(filename, verbose, db=None, dburl=None):
                 try:
                     (filesystem,scandate,folder,proj,user,size,filesize,inodes) = line.strip(os.linesep).split() 
                 except:
-                    if verbose: print('Finished parsing short usage')
+                    if verbose: print('Finished parsing usage')
                     parsing_usage = False
                     continue
                 db.adduser(user)
+                if storagepoint == 'scratch':
+                    # Swap folder and proj in the case of scratch as it is now accounted for by 
+                    # location, so folder never changes but project code can and subsequent entries 
+                    # overwrite previous ones unless values of folder and proj are swapped
+                    folder, proj = proj, folder 
                 if verbose: print('Adding ', project, user, system, storagepoint, str(date), folder, 
                                              parse_size(size.upper(), u='', pre='BKMGTPEZY'), inodes)
                 db.adduserstorage(project, 
