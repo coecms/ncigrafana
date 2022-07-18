@@ -1,7 +1,7 @@
 ncigrafana
 ==========
 
-Extended usage information for the NCI system raijin.
+Extended usage information for the NCI HPC system.
 
 .. image:: https://github.com/coecms/ncigrafana/actions/workflows/CI.yml/badge.svg
    :target: https://github.com/coecms/ncigrafana/actions/workflows/CI.yml
@@ -14,4 +14,4 @@ database.
 
 There are two main programs, ``parse_account_usage_data`` which parses the output
 from ``nci_account``, and ``parse_user_storage_data`` which parses the output from
-the programs that report usage on the various file systems, e.g. ``gdata3_files_report``.
+the programs that report usage on the various file systems.
