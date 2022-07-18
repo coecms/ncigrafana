@@ -1,0 +1,7 @@
+dataset
+pandas
+numpy
+dataset
+sqlalchemy
+Psycopg2
+pytest
