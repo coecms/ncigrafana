@@ -3,8 +3,8 @@ ncigrafana
 
 Extended usage information for the NCI system raijin.
 
-.. image:: https://travis-ci.org/coecms/ncigrafana.svg?branch=master
-   :target: https://travis-ci.org/coecms/ncigrafana
+.. image:: https://github.com/coecms/ncigrafana/actions/workflows/CI.yml/badge.svg
+   :target: https://github.com/coecms/ncigrafana/actions/workflows/CI.yml
 .. image:: https://circleci.com/gh/coecms/ncigrafana.svg?style=shield
   :target: https://circleci.com/gh/coecms/ncigrafana
 
