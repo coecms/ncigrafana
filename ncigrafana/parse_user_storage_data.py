@@ -21,103 +21,92 @@ limitations under the License.
 from __future__ import print_function
 
 import argparse
-import pwd
-import datetime
-import os
+import json
 import sys
-import re
-import shutil
+import requests
+import pwd
+import grp
+import datetime
+
 from .UsageDataset import *
-from .DBcommon import extract_num_unit, parse_size, mkdir, archive
 from .DBcommon import date_range_from_quarter, datetoyearquarter
+from .NCIAPI import prep_auth_header
 
 databases = {}
 dbfileprefix = '.'
 
-def parse_file_report(filename, verbose, db=None, dburl=None):
+def parse_file_report(nci_api_url: str, projects: str, filesystem: str, verbose: bool, db: ProjectDataset=None, dburl: str=None):
 
-    # Filename contains project and storage point information
-    (timestamp, project, storagepoint, tmp) = os.path.basename(filename).split('.')
 
-    # Hard code the system based on storagepoint as this information
-    # does not exist in the dumpfile. Not even sure NCI make this distinction
-    # any longer, but we need this information for the database
-    if storagepoint.startswith('gdata'):
-        system = 'global'
-    elif storagepoint == 'scratch':
-        system = 'gadi'
+    if filesystem == 'scratch':
+        system='gadi'
+        project_option='project'
+    elif filesystem.startswith("gdata"):
+        system='global'
+        project_option='group'
+    else:
+        exit(f"Invalid filesystem: {filesystem}")
 
-    with open(filename) as f:
+    ### Derived from nci-files-report client (command.py)
+    request_d={'fs':[filesystem],'filter':{'type':project_option,'values':projects.split(',')}}
+    
+    try:
+        r=requests.post(nci_api_url,headers=prep_auth_header(),json=request_d)
+    except:
+        exit(f"{sys.exc_info()[0]} {sys.exc_info()[1]}")
 
-        print("Parsing {file}".format(file=filename))
+    if r.status_code != 200:
+        exit(f"Unable to retrieve data from NCI API: Status code: {r.status_code}, Error: {json.loads(r.content)['payload']}")
 
-        parsing_usage = False
+    all_data = json.loads(r.content)['payload']
 
-        for line in f:
-            if verbose: print("> ",line)
-            if line.startswith("%%%%%%%%%%%%%%%%"):
-                # Grab date string
-                date = datetime.datetime.strptime(f.readline().strip(os.linesep), 
-                                                  "%a %b %d %H:%M:%S %Z %Y").date()
-                year, quarter = datetoyearquarter(date)
-                startdate, enddate = date_range_from_quarter(year,quarter)
-                db.addquarter(year, quarter, startdate, enddate)
-                parsing_usage = True
-                # Gobble header line
-                line = f.readline()
-                continue
+    ### Lets pretend there are no cross-quarter entries...
+    date = datetime.datetime.fromisoformat(all_data[0]['end_time'])
+    year, quarter = datetoyearquarter(date)
+    startdate, enddate = date_range_from_quarter(year,quarter)
+    db.addquarter(year,quarter,startdate,enddate)
 
-            if parsing_usage:
-                try:
-                    (filesystem,scandate,folder,proj,user,size,filesize,inodes) = line.strip(os.linesep).split() 
-                except:
-                    if verbose: print('Finished parsing usage')
-                    parsing_usage = False
-                    continue
-                db.adduser(user)
-                if storagepoint == 'scratch':
-                    # Swap folder and proj in the case of scratch as it is now accounted for by 
-                    # location, so folder never changes but project code can and subsequent entries 
-                    # overwrite previous ones unless values of folder and proj are swapped
-                    folder, proj = proj, folder 
-                if verbose: print('Adding ', project, user, system, storagepoint, str(date), folder, 
-                                             parse_size(size.upper(), u='', pre='BKMGTPEZY'), inodes)
-                db.adduserstorage(project, 
-                                  user, 
-                                  system, 
-                                  storagepoint, 
-                                  str(date), 
-                                  folder, 
-                                  parse_size(size.upper(), u='', pre='BKMGTPEZY'), 
-                                  inodes)
+    for entry in all_data:
+        user = pwd.getpwuid(entry['user']).pw_name
+        db.adduser(user)
+        # Swap folder and proj in the case of scratch as it is now accounted for by 
+        # location, so folder never changes but project code can and subsequent entries 
+        # overwrite previous ones unless values of folder and proj are swapped
+        if filesystem == 'scratch':
+            folder=grp.getgrgid(entry['group']).gr_name
+            project=entry['project']
+        else:
+            folder=entry['project']
+            project=grp.getgrgid(entry['group']).gr_name
+        ### Derived from nci-files-report client (formatters/table.py)
+        size = 512 * int(entry['blocks']['single'] + entry['blocks']['multi'])
+        inodes = int(entry['count']['single'] + entry['count']['multi'])
+        if verbose:
+            ### Date comes out in iso format, first 10 characters will be YYYY-MM-DD
+            print(f"Adding {project}, {user}, {system}, {filesystem}, {entry['end_time'][:10]}, {folder}, {size}, {inodes}")
+        db.adduserstorage(project,user,system,filesystem,entry['end_time'][:10],folder,size,inodes)
 
 def main(args):
-
-    verbose = args.verbose
 
     db = None
     if args.dburl:
         db = ProjectDataset(dburl=args.dburl)
 
-    for f in args.inputs:
-        try:
-            parse_file_report(f, verbose, db=db)
-        except:
-            raise
-        else:
-            if not args.noarchive:
-                archive(f)
+    try:
+        parse_file_report(args.nci_api_url,args.projects,args.filesystem,args.verbose,db=db)
+    except:
+        raise
 
 def parse_args(args):
     """
     Parse arguments given as list (args)
     """
     parser = argparse.ArgumentParser(description="Parse file report dumps")
-    parser.add_argument("-d","--directory", help="Specify directory to find dump files", default=".")
+    parser.add_argument("-P","--projects",help="Comma-separated list of projects")
+    parser.add_argument("-f","--filesystem",help="Filesystem")
     parser.add_argument("-v","--verbose", help="Verbose output", action='store_true')
     parser.add_argument("-db","--dburl", help="Database file url", default=None)
-    parser.add_argument("-n","--noarchive", help="Database file url", action='store_true')
-    parser.add_argument("inputs", help="dumpfiles", nargs='+')
+    parser.add_argument("nci_api_url", help="API", default=None)
 
     return parser.parse_args()
 
@@ -138,4 +127,3 @@ def main_argv():
 if __name__ == "__main__":
 
     main_argv()
-

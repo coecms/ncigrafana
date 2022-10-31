@@ -5,3 +5,5 @@ dataset
 sqlalchemy
 Psycopg2
 pytest
+pymunge
+requests

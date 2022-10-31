@@ -15,4 +15,6 @@ dependencies:
     - dataset
     - sqlalchemy
     - Psycopg2
+    - pymunge
+    - requests
 
