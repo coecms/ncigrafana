@@ -1,8 +1,19 @@
 CHANGES
 =======
 
-* Altered test data to match change in scratch accounting
-* Swap project and folder codes to account for scratch accounting change
+* Have tests properly handle cases where gid exists or not
+* Modify test to handle non-existent groups
+* Handle uids and gids that do not correspond to users/groups on the system
+* Use nci-files-report --json. Actually add test data to repo
+* Use nci\_account --json instead of API directly
+* Update parse\_user\_storage\_data to use backend NCI API
+* Update README info
+* Remove travis CI config. Add Github Actions status badge
+
+0.3.3
+-----
+
+* Swap project and folder codes to account for scratch accounting change (#22)
 
 0.3.2
 -----

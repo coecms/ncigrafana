@@ -29,7 +29,7 @@ import grp
 import datetime
 
 from .UsageDataset import *
-from .DBcommon import date_range_from_quarter, datetoyearquarter
+from .DBcommon import date_range_from_quarter, datetoyearquarter, archive
 
 databases = {}
 dbfileprefix = '.'
@@ -102,6 +102,9 @@ def main(args):
             parse_file_report(f,args.verbose,db=db)
         except:
             raise
+        else:
+            if not args.noarchive:
+                archive(f)
 
 def parse_args(args):
     """
