@@ -57,18 +57,30 @@ def parse_file_report(filename, verbose, db=None, dburl=None):
     db.addquarter(year,quarter,startdate,enddate)
     
     for entry in all_data:
-        user = pwd.getpwuid(entry['uid']).pw_name
+        ### Handle uids that don't exist
+        try:
+            user = pwd.getpwuid(entry['uid']).pw_name
+        except KeyError:
+            user = str(entry['uid'])
         db.adduser(user)
 
         if storagepoint == 'scratch':
         # Swap folder and proj in the case of scratch as it is now accounted for by 
         # location, so folder never changes but project code can and subsequent entries 
         # overwrite previous ones unless values of folder and proj are swapped
-            folder=grp.getgrgid(entry['gid']).gr_name
+            ### Handle gids that don't exist
+            try:
+                folder=grp.getgrgid(entry['gid']).gr_name
+            except KeyError:
+                folder=str(entry['gid'])
             project=entry['project']
         else:
             folder=entry['project']
-            project=grp.getgrgid(entry['gid']).gr_name
+            ### Handle gids that don't exist
+            try:
+                project=grp.getgrgid(entry['gid']).gr_name
+            except KeyError:
+                project=str(entry['gid'])
 
         ### Derived from nci-files-report client (formatters/table.py)
         size = 512 * int(entry['blocks']['single'] + entry['blocks']['multiple'])
