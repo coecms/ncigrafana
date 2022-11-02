@@ -10,6 +10,7 @@ import pandas as pd
 import pytest
 import sys
 import time
+import grp
 
 from ncigrafana.UsageDataset import *
 from ncigrafana.DBcommon import datetoyearquarter
@@ -47,6 +48,10 @@ def test_getstoragepoints(db):
 def test_getstorage(db):
 
     project = 'w40'
+    try:
+        _ = grp.getgrnam(project)
+    except KeyError:
+        project = '5653'
     year = 2022
     quarter = 'q4'
     system = 'gadi'
