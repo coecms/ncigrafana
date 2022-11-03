@@ -1,8 +1,15 @@
 CHANGES
 =======
 
-* Altered test data to match change in scratch accounting
-* Swap project and folder codes to account for scratch accounting change
+* Handle uids and gids that do not correspond to users/groups on the system
+* Use nci-files-report --json.
+* Update README info
+* Remove travis CI config. Add Github Actions status badge
+
+0.3.3
+-----
+
+* Swap project and folder codes to account for scratch accounting change (#22)
 
 0.3.2
 -----

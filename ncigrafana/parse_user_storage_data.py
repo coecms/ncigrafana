@@ -21,15 +21,15 @@ limitations under the License.
 from __future__ import print_function
 
 import argparse
-import pwd
-import datetime
+import json
 import os
 import sys
-import re
-import shutil
+import pwd
+import grp
+import datetime
+
 from .UsageDataset import *
-from .DBcommon import extract_num_unit, parse_size, mkdir, archive
-from .DBcommon import date_range_from_quarter, datetoyearquarter
+from .DBcommon import date_range_from_quarter, datetoyearquarter, archive
 
 databases = {}
 dbfileprefix = '.'
@@ -37,7 +37,7 @@ dbfileprefix = '.'
 def parse_file_report(filename, verbose, db=None, dburl=None):
 
     # Filename contains project and storage point information
-    (timestamp, project, storagepoint, tmp) = os.path.basename(filename).split('.')
+    (_, _, storagepoint, _) = os.path.basename(filename).split('.')
 
     # Hard code the system based on storagepoint as this information
     # does not exist in the dumpfile. Not even sure NCI make this distinction
@@ -48,52 +48,50 @@ def parse_file_report(filename, verbose, db=None, dburl=None):
         system = 'gadi'
 
     with open(filename) as f:
+        all_data=json.loads(f.read())
+        
+    ### Grab timestamp - pretend there are no cross-quarter entries
+    datestamp = datetime.datetime.fromisoformat(all_data[0]["scan_time"])
+    year, quarter = datetoyearquarter(datestamp)
+    startdate, enddate = date_range_from_quarter(year,quarter)
+    db.addquarter(year,quarter,startdate,enddate)
+    
+    for entry in all_data:
+        ### Handle uids that don't exist
+        try:
+            user = pwd.getpwuid(entry['uid']).pw_name
+        except KeyError:
+            user = str(entry['uid'])
+        db.adduser(user)
 
-        print("Parsing {file}".format(file=filename))
+        if storagepoint == 'scratch':
+        # Swap folder and proj in the case of scratch as it is now accounted for by 
+        # location, so folder never changes but project code can and subsequent entries 
+        # overwrite previous ones unless values of folder and proj are swapped
+            ### Handle gids that don't exist
+            try:
+                folder=grp.getgrgid(entry['gid']).gr_name
+            except KeyError:
+                folder=str(entry['gid'])
+            project=entry['project']
+        else:
+            folder=entry['project']
+            ### Handle gids that don't exist
+            try:
+                project=grp.getgrgid(entry['gid']).gr_name
+            except KeyError:
+                project=str(entry['gid'])
 
-        parsing_usage = False
+        ### Derived from nci-files-report client (formatters/table.py)
+        size = 512 * int(entry['blocks']['single'] + entry['blocks']['multiple'])
+        inodes = int(entry['count']['single'] + entry['count']['multiple'])
 
-        for line in f:
-            if verbose: print("> ",line)
-            if line.startswith("%%%%%%%%%%%%%%%%"):
-                # Grab date string
-                date = datetime.datetime.strptime(f.readline().strip(os.linesep), 
-                                                  "%a %b %d %H:%M:%S %Z %Y").date()
-                year, quarter = datetoyearquarter(date)
-                startdate, enddate = date_range_from_quarter(year,quarter)
-                db.addquarter(year, quarter, startdate, enddate)
-                parsing_usage = True
-                # Gobble header line
-                line = f.readline()
-                continue
-
-            if parsing_usage:
-                try:
-                    (filesystem,scandate,folder,proj,user,size,filesize,inodes) = line.strip(os.linesep).split() 
-                except:
-                    if verbose: print('Finished parsing usage')
-                    parsing_usage = False
-                    continue
-                db.adduser(user)
-                if storagepoint == 'scratch':
-                    # Swap folder and proj in the case of scratch as it is now accounted for by 
-                    # location, so folder never changes but project code can and subsequent entries 
-                    # overwrite previous ones unless values of folder and proj are swapped
-                    folder, proj = proj, folder 
-                if verbose: print('Adding ', project, user, system, storagepoint, str(date), folder, 
-                                             parse_size(size.upper(), u='', pre='BKMGTPEZY'), inodes)
-                db.adduserstorage(project, 
-                                  user, 
-                                  system, 
-                                  storagepoint, 
-                                  str(date), 
-                                  folder, 
-                                  parse_size(size.upper(), u='', pre='BKMGTPEZY'), 
-                                  inodes)
+        if verbose:
+            ### Date comes out in iso format, first 10 characters will be YYYY-MM-DD
+            print(f"Adding {project}, {user}, {system}, {storagepoint}, {entry['scan_time'][:10]}, {folder}, {size}, {inodes}")
+        db.adduserstorage(project,user,system,storagepoint,entry['scan_time'][:10],folder,size,inodes)
 
 def main(args):
-
-    verbose = args.verbose
 
     db = None
     if args.dburl:
@@ -101,7 +99,7 @@ def main(args):
 
     for f in args.inputs:
         try:
-            parse_file_report(f, verbose, db=db)
+            parse_file_report(f,args.verbose,db=db)
         except:
             raise
         else:
@@ -138,4 +136,3 @@ def main_argv():
 if __name__ == "__main__":
 
     main_argv()
-
