@@ -33,7 +33,7 @@ from .DBcommon import datetoyearquarter, date_range_from_quarter
 
 databases = {}
 dbfileprefix = '.'
-nfields = 12
+nfields = 7
 
 def parse_lquota(filename, verbose, db=None, dburl=None):
 
@@ -74,20 +74,26 @@ def parse_lquota(filename, verbose, db=None, dburl=None):
                     parsing_usage = False
                     continue
 
-                array = line.strip(os.linesep).split(maxsplit=nfields)
-                project = array[0]
-                storagepoint = array[1]
-                size = parse_size((array[2]+array[3]), b=1024, u='iB')
-                size_quota = parse_size((array[4]+array[5]), b=1024, u='iB')
-                size_limit = parse_size((array[6]+array[7]), b=1024, u='iB')
-                inodes = int(array[8])
-                inodes_quota = int(array[9])
-                inodes_limit = int(array[10])
+                project,storagepoint,size,size_quota,_,inodes,inodes_quota,_ = line.strip(os.linesep).split(maxsplit=nfields)
+                size=float(size)
+                size_quota=float(size_quota)
+                inodes=int(inodes)
+                inodes_quota=int(inodes_quota)
+                #array = line.strip(os.linesep).split(maxsplit=nfields)
+                #project = array[0]
+                #storagepoint = array[1]
+                #size=array[2]
+                #size = parse_size((array[2]+array[3]), b=1024, u='iB')
+                #size_quota = parse_size((array[4]+array[5]), b=1024, u='iB')
+                #size_limit = parse_size((array[6]+array[7]), b=1024, u='iB')
+                #inodes = int(array[8])
+                #inodes_quota = int(array[9])
+                #inodes_limit = int(array[10])
 
-                if len(array) == nfields:
-                    msg = array[nfields-1]
-                else:
-                    msg = None
+                #if len(array) == nfields:
+                #    msg = array[nfields-1]
+                #else:
+                #    msg = None
 
                 system = 'gadi'
                 scheme = 'Combined'
