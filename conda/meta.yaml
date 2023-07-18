@@ -20,7 +20,7 @@ requirements:
         - pandas
         - dataset
         - Psycopg2 
-        - sqlalchemy
+        - sqlalchemy<2
     entry_points:
         - parse_user_storage_data = ncigrafana.parse_user_storage_data:main_argv
         - parse_account_usage_data = ncigrafana.parse_account_usage_data:main_argv

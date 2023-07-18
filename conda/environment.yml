@@ -13,6 +13,6 @@ dependencies:
     - matplotlib
     - numpy
     - dataset
-    - sqlalchemy
+    - sqlalchemy<2.0
     - Psycopg2
 
